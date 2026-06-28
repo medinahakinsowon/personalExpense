@@ -38,7 +38,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex items-center gap-3">
           <Logo />
           <span className="text-white font-display font-bold text-2xl tracking-tight">
-            Ledger
+            Personal Expense
           </span>
         </div>
 
@@ -70,7 +70,7 @@ export default function LoginPage() {
 
           <div>
             <h1 className="text-4xl font-display font-bold text-white leading-tight">
-              Every dollar has
+              Every naira has
               <br />
               <span className="text-gradient">a story to tell.</span>
             </h1>
@@ -94,7 +94,7 @@ export default function LoginPage() {
             <div className="lg:hidden flex items-center gap-3 mb-2">
               <Logo />
               <span className="text-white font-display font-bold text-xl">
-                Ledger
+                Personal Expense
               </span>
             </div>
 
@@ -267,7 +267,7 @@ function StatCard({ icon, label, value, sub, color }) {
 function Logo() {
   return (
     <div className="w-9 h-9 rounded-xl bg-linear-to-br from-brand-400 via-pink-500 to-orange-400 flex items-center justify-center shadow-lg">
-      <span className="text-white font-display font-black text-base">₤</span>
+      <span className="text-white font-display font-black text-base">N</span>
     </div>
   );
 }

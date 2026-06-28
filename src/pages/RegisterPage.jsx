@@ -39,7 +39,7 @@ import { useAuth } from "../utils/AuthContext";
         <div className="relative z-10 flex items-center gap-3">
           <Logo />
           <span className="text-white font-display font-bold text-2xl">
-            Expense Tracker
+           Personal Expense
           </span>
         </div>
 
