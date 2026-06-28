@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 
- function LoginPage() {
+export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   const handleSubmit = async (e) => {
@@ -37,7 +38,7 @@ import { useAuth } from "../utils/AuthContext";
         <div className="relative z-10 flex items-center gap-3">
           <Logo />
           <span className="text-white font-display font-bold text-2xl tracking-tight">
-            Expense Tracker
+            Ledger
           </span>
         </div>
 
@@ -47,7 +48,7 @@ import { useAuth } from "../utils/AuthContext";
             <StatCard
               icon="💸"
               label="This month"
-              value="N2,450.00"
+              value="$2,450.00"
               sub="+12% from last month"
               color="from-brand-500/30 to-brand-700/20"
             />
@@ -55,21 +56,21 @@ import { useAuth } from "../utils/AuthContext";
               icon="📊"
               label="Top category"
               value="Food & Dining"
-              sub="N380 across 14 entries"
+              sub="$380 across 14 entries"
               color="from-orange-500/30 to-orange-700/20"
             />
             <StatCard
               icon="✅"
               label="Under budget"
               value="You're on track"
-              sub="N550 left for the month"
+              sub="$550 left for the month"
               color="from-emerald-500/30 to-emerald-700/20"
             />
           </div>
 
           <div>
             <h1 className="text-4xl font-display font-bold text-white leading-tight">
-              Every naira has
+              Every dollar has
               <br />
               <span className="text-gradient">a story to tell.</span>
             </h1>
@@ -81,7 +82,7 @@ import { useAuth } from "../utils/AuthContext";
         </div>
 
         <p className="relative z-10 text-slate-600 text-xs">
-          © {new Date().getFullYear()} Expense · Your data, your control.
+          © {new Date().getFullYear()} Ledger · Your data, your control.
         </p>
       </div>
 
@@ -93,7 +94,7 @@ import { useAuth } from "../utils/AuthContext";
             <div className="lg:hidden flex items-center gap-3 mb-2">
               <Logo />
               <span className="text-white font-display font-bold text-xl">
-                Expense Tracker
+                Ledger
               </span>
             </div>
 
@@ -116,16 +117,15 @@ import { useAuth } from "../utils/AuthContext";
                 onChange={set("email")}
                 autoComplete="email"
               />
-              <Field
+              <PasswordField
                 label="Password"
                 id="password"
-                type="password"
                 placeholder="••••••••"
                 value={form.password}
                 onChange={set("password")}
-                autoComplete="current-password"
+                show={showPassword}
+                onToggle={() => setShowPassword((v) => !v)}
               />
-
               <div className="flex justify-end -mt-2">
                 <Link
                   to="/forgot-password"
@@ -182,6 +182,73 @@ function Field({ label, id, ...props }) {
   );
 }
 
+function PasswordField({
+  label,
+  id,
+  placeholder,
+  value,
+  onChange,
+  show,
+  onToggle,
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="text-sm font-medium text-slate-300">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          type={show ? "text" : "password"}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          autoComplete="current-password"
+          required
+          className="w-full px-4 py-3 pr-12 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
+        />
+        <button
+          type="button"
+          onClick={onToggle}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1 rounded-lg hover:bg-white/10"
+          aria-label={show ? "Hide password" : "Show password"}
+        >
+          {show ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function StatCard({ icon, label, value, sub, color }) {
   return (
     <div className={`glass rounded-2xl p-4 bg-linear-to-br ${color}`}>
@@ -197,13 +264,10 @@ function StatCard({ icon, label, value, sub, color }) {
   );
 }
 
-
-export default LoginPage;
-
 function Logo() {
   return (
     <div className="w-9 h-9 rounded-xl bg-linear-to-br from-brand-400 via-pink-500 to-orange-400 flex items-center justify-center shadow-lg">
-      <span className="text-white font-display font-black text-base">N</span>
+      <span className="text-white font-display font-black text-base">₤</span>
     </div>
   );
 }
