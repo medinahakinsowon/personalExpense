@@ -18,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(form.email, form.password);
-      navigate(location.state?.from || "/", { replace: true });
+      navigate(location.state?.from || "/dashboard", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password.");
     } finally {
@@ -35,12 +35,15 @@ export default function LoginPage() {
         <div className="absolute -bottom-20 -right-20 w-75 h-75 rounded-full bg-pink-500/20 blur-[80px] pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-50 h-50 rounded-full bg-orange-500/10 blur-[60px] pointer-events-none" />
 
-        <div className="relative z-10 flex items-center gap-3">
+        <Link
+          to="/"
+          className="relative z-10 flex items-center gap-3 w-fit hover:opacity-80 transition-opacity"
+        >
           <Logo />
           <span className="text-white font-display font-bold text-2xl tracking-tight">
             Personal Expense
           </span>
-        </div>
+        </Link>
 
         <div className="relative z-10 space-y-8">
           {/* Floating stat cards */}
@@ -48,7 +51,7 @@ export default function LoginPage() {
             <StatCard
               icon="💸"
               label="This month"
-              value="$2,450.00"
+              value="₦487,250"
               sub="+12% from last month"
               color="from-brand-500/30 to-brand-700/20"
             />
@@ -56,21 +59,21 @@ export default function LoginPage() {
               icon="📊"
               label="Top category"
               value="Food & Dining"
-              sub="$380 across 14 entries"
+              sub="₦125,400 across 14 entries"
               color="from-orange-500/30 to-orange-700/20"
             />
             <StatCard
               icon="✅"
               label="Under budget"
               value="You're on track"
-              sub="$550 left for the month"
+              sub="₦62,750 left for the month"
               color="from-emerald-500/30 to-emerald-700/20"
             />
           </div>
 
           <div>
             <h1 className="text-4xl font-display font-bold text-white leading-tight">
-              Every naira has
+              Every Naira has
               <br />
               <span className="text-gradient">a story to tell.</span>
             </h1>
@@ -91,12 +94,15 @@ export default function LoginPage() {
         <div className="w-full max-w-md fade-up">
           <div className="glass rounded-3xl p-8 space-y-6">
             {/* Mobile logo */}
-            <div className="lg:hidden flex items-center gap-3 mb-2">
+            <Link
+              to="/"
+              className="lg:hidden flex items-center gap-3 mb-2 w-fit hover:opacity-80 transition-opacity"
+            >
               <Logo />
               <span className="text-white font-display font-bold text-xl">
                 Personal Expense
               </span>
-            </div>
+            </Link>
 
             <div>
               <h2 className="text-2xl font-display font-bold text-white">
@@ -267,7 +273,7 @@ function StatCard({ icon, label, value, sub, color }) {
 function Logo() {
   return (
     <div className="w-9 h-9 rounded-xl bg-linear-to-br from-brand-400 via-pink-500 to-orange-400 flex items-center justify-center shadow-lg">
-      <span className="text-white font-display font-black text-base">N</span>
+      <span className="text-white font-display font-black text-base">₦</span>
     </div>
   );
 }

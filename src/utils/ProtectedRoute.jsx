@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }) {
           <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-brand-400 to-pink-500 flex items-center justify-center animate-pulse">
             <span className="text-white font-bold text-xl">L</span>
           </div>
-          <p className="text-slate-400 text-sm">Loading your ledger…</p>
+          <p className="text-slate-400 text-sm">Loading your Personal Expense Page</p>
         </div>
       </div>
     );

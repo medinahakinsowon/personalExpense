@@ -2,26 +2,35 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/AuthContext";
 
- function RegisterPage() {
+export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+  const passwordsMatch = form.password && form.password === form.confirm;
+  const passwordLongEnough = form.password.length >= 8;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (form.password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
+    if (!passwordLongEnough)
+      return setError("Password must be at least 8 characters.");
+    if (!passwordsMatch) return setError("Passwords do not match.");
+
     setLoading(true);
     try {
       await register(form.name, form.email, form.password);
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't create your account.");
     } finally {
@@ -36,12 +45,15 @@ import { useAuth } from "../utils/AuthContext";
         <div className="absolute -top-15 -right-15 w-87.5 h-87.5 rounded-full bg-pink-500/20 blur-[80px] pointer-events-none" />
         <div className="absolute -bottom-15 -left-15 w-75 h-75 rounded-full bg-brand-500/20 blur-[80px] pointer-events-none" />
 
-        <div className="relative z-10 flex items-center gap-3">
+        <Link
+          to="/"
+          className="relative z-10 flex items-center gap-3 w-fit hover:opacity-80 transition-opacity"
+        >
           <Logo />
           <span className="text-white font-display font-bold text-2xl">
-           Personal Expense
+            Personal Expense
           </span>
-        </div>
+        </Link>
 
         <div className="relative z-10 space-y-6">
           <div className="grid grid-cols-2 gap-3 max-w-sm">
@@ -79,7 +91,7 @@ import { useAuth } from "../utils/AuthContext";
         </div>
 
         <p className="relative z-10 text-slate-600 text-xs">
-          © {new Date().getFullYear()} Expense · Your data, your control.
+          © {new Date().getFullYear()} Ledger · Your data, your control.
         </p>
       </div>
 
@@ -87,12 +99,15 @@ import { useAuth } from "../utils/AuthContext";
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md fade-up">
           <div className="glass rounded-3xl p-8 space-y-6">
-            <div className="lg:hidden flex items-center gap-3">
+            <Link
+              to="/"
+              className="lg:hidden flex items-center gap-3 w-fit hover:opacity-80 transition-opacity"
+            >
               <Logo />
               <span className="text-white font-display font-bold text-xl">
-                Expense Tracker
+                Personal Expense
               </span>
-            </div>
+            </Link>
 
             <div>
               <h2 className="text-2xl font-display font-bold text-white">
@@ -122,15 +137,36 @@ import { useAuth } from "../utils/AuthContext";
                 onChange={set("email")}
                 autoComplete="email"
               />
+
               <PasswordField
                 label="Password"
                 id="password"
-                placeholder="••••••••"
+                placeholder="Minimum 8 characters"
                 value={form.password}
                 onChange={set("password")}
                 show={showPassword}
                 onToggle={() => setShowPassword((v) => !v)}
+                autoComplete="new-password"
               />
+
+              <PasswordField
+                label="Confirm password"
+                id="confirm"
+                placeholder="Re-enter your password"
+                value={form.confirm}
+                onChange={set("confirm")}
+                show={showConfirm}
+                onToggle={() => setShowConfirm((v) => !v)}
+                autoComplete="new-password"
+              />
+
+              {/* Live password hints */}
+              {(form.password || form.confirm) && (
+                <ul className="space-y-1 -mt-1">
+                  <Hint ok={passwordLongEnough} label="At least 8 characters" />
+                  <Hint ok={passwordsMatch} label="Passwords match" />
+                </ul>
+              )}
 
               {error && (
                 <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
@@ -163,9 +199,6 @@ import { useAuth } from "../utils/AuthContext";
   );
 }
 
-
-export default RegisterPage;
-
 function Field({ label, id, ...props }) {
   return (
     <div className="space-y-1.5">
@@ -190,6 +223,7 @@ function PasswordField({
   onChange,
   show,
   onToggle,
+  autoComplete,
 }) {
   return (
     <div className="space-y-1.5">
@@ -203,7 +237,7 @@ function PasswordField({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          autoComplete="current-password"
+          autoComplete={autoComplete}
           required
           className="w-full px-4 py-3 pr-12 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all"
         />
@@ -249,10 +283,21 @@ function PasswordField({
   );
 }
 
+function Hint({ ok, label }) {
+  return (
+    <li
+      className={`flex items-center gap-2 text-xs transition-colors ${ok ? "text-emerald-400" : "text-slate-500"}`}
+    >
+      <span>{ok ? "✓" : "○"}</span>
+      {label}
+    </li>
+  );
+}
+
 function Logo() {
   return (
     <div className="w-9 h-9 rounded-xl bg-linear-to-br from-brand-400 via-pink-500 to-orange-400 flex items-center justify-center shadow-lg">
-      <span className="text-white font-display font-black text-base">N</span>
+      <span className="text-white font-display font-black text-base">₦</span>
     </div>
   );
 }

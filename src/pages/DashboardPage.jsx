@@ -62,10 +62,12 @@ function greeting() {
       .catch(() => {});
   }, []);
 
+
   // Reset page on filter change
   useEffect(() => {
     setPage(1);
   }, [filters]);
+
 
   const buildParams = useCallback(
     (extra = {}) => {
@@ -79,6 +81,7 @@ function greeting() {
     [filters, page],
   );
 
+
   const loadExpenses = useCallback(async () => {
     setLoadingList(true);
     try {
@@ -91,6 +94,7 @@ function greeting() {
       setLoadingList(false);
     }
   }, [buildParams]);
+  
 
   const loadSummary = useCallback(async () => {
     try {
